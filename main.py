@@ -1,5 +1,6 @@
 import telebot
 from dotenv_func import dotenv
+from download_functions import escape_md ,download_mp4_from_instagram
 
 
 SECRET_KEY = dotenv('SECRET_KEY')
@@ -14,11 +15,15 @@ def start(message):
     bot.send_message(message.chat.id, WELCOME_TEXT.format(name=name))
 
 
-@bot.message_handler(content_types=['text'])
-def url_processing(message):
+@bot.message_handler(func=lambda message: "instagram" in message.text)
+def instagram_video_downloader(message):
     url = message.text
-    url = url.replace('www.', 'kk', 1)
-    bot.send_message(message.chat.id, url)
+    url = escape_md(download_mp4_from_instagram(url))
+    bot.send_message(
+        message.chat.id,
+        f'Видео загружается ожидайте[\\.]({url})',
+        parse_mode="MarkdownV2"
+    )
 
 
 if __name__ == '__main__':
