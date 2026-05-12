@@ -6,4 +6,4 @@ def escape_md(text: str) -> str:
 
 
 def download_mp4_from_instagram(url):
-    return url.replace('instagram', 'kksave', 1)
+    return url.replace('instagram', 'kksav', 1)
