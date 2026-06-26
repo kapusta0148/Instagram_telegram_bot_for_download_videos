@@ -26,6 +26,7 @@ def download_instagram_video(url: str) -> str:
     out_template = os.path.join(
         tempfile.gettempdir(), f'{uuid.uuid4().hex}.%(ext)s'
     )
+    cookies_path = os.path.join(os.path.dirname(__file__), 'cookies.txt')
     ydl_opts = {
         'format': 'mp4/bestvideo+bestaudio/best',
         'outtmpl': out_template,
@@ -33,6 +34,8 @@ def download_instagram_video(url: str) -> str:
         'no_warnings': True,
         'noplaylist': True,
     }
+    if os.path.exists(cookies_path):
+        ydl_opts['cookiefile'] = cookies_path
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
         return ydl.prepare_filename(info)
