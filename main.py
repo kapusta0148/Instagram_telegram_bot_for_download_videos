@@ -5,13 +5,15 @@ import telebot
 from dotenv_func import dotenv
 from download_functions import (
     TELEGRAM_FILE_LIMIT,
-    download_instagram_video,
+    download_video,
     escape_md,
-    mirror_link,
+    get_video_url_via_rapidapi,
 )
 
 SECRET_KEY = dotenv('SECRET_KEY')
 WELCOME_TEXT = dotenv('WELCOME_TEXT')
+RAPIDAPI_KEY = dotenv('RAPIDAPI_KEY')
+
 bot = telebot.TeleBot(SECRET_KEY)
 bot.remove_webhook()
 
@@ -30,12 +32,15 @@ def instagram_video_downloader(message):
 
     path = None
     try:
-        path = download_instagram_video(url)
+        video_url = get_video_url_via_rapidapi(url, RAPIDAPI_KEY)
+
+        path = download_video(video_url)
+
         if os.path.getsize(path) <= TELEGRAM_FILE_LIMIT:
             with open(path, 'rb') as video:
                 bot.send_video(chat_id, video)
         else:
-            link = escape_md(mirror_link(url))
+            link = escape_md(video_url)
             bot.send_message(
                 chat_id,
                 f'Видео больше 50 МБ — скачайте по ссылке: [тык]({link})',
